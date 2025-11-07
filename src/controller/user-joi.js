@@ -112,57 +112,57 @@ export const signin = async (req, res) => {
   }
 };
 
-// export const refreshTokenHandler = async (req, res) => {
-//   try {
-//     const token = req.cookies.refreshToken;
-//     if (!token) {
-//       return res.status(401).json({ message: "Không có refresh token" });
-//     }
+export const refreshTokenHandler = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) {
+      return res.status(401).json({ message: "Không có refresh token" });
+    }
 
-//     jwt.verify(
-//       token,
-//       REFRESH_TOKEN_SECRET,
-//       async (err, decoded) => {
-//         if (err) {
-//           return res
-//             .status(403)
-//             .json({ message: "Refresh token không hợp lệ" });
-//         }
+    jwt.verify(
+      token,
+      REFRESH_TOKEN_SECRET,
+      async (err, decoded) => {
+        if (err) {
+          return res
+            .status(403)
+            .json({ message: "Refresh token không hợp lệ" });
+        }
 
-//         const user = await User.findById(decoded.id);
-//         if (!user) {
-//           return res.status(404).json({ message: "Người dùng không tồn tại" });
-//         }
+        const user = await User.findById(decoded.id);
+        if (!user) {
+          return res.status(404).json({ message: "Người dùng không tồn tại" });
+        }
 
-//         const newAccessToken = jwt.sign(
-//           {
-//             id: user._id,
-//             email: user.email,
-//             role: user.role,
-//           },
-//          ACCESS_TOKEN_SECRET,
-//           { expiresIn: "1d" }
-//         );
+        const newAccessToken = jwt.sign(
+          {
+            id: user._id,
+            email: user.email,
+            role: user.role,
+          },
+         ACCESS_TOKEN_SECRET,
+          { expiresIn: "1d" }
+        );
 
-//         res.cookie("accessToken", newAccessToken, {
-//           httpOnly: true,
-//           secure: true,
-//           sameSite: "strict",
-//           maxAge: 1 * 24 * 60 * 60 * 1000,
-//           domain: "https://nextnode-mu.vercel.app",
-//           path: "/",
-//         });
+        res.cookie("accessToken", newAccessToken, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "strict",
+          maxAge: 1 * 24 * 60 * 60 * 1000,
+          domain: "https://nextnode-mu.vercel.app",
+          path: "/",
+        });
 
-//         return res.status(200).json({
-//           message: "Làm mới token thành công",
-//         });
-//       }
-//     );
-//   } catch (error) {
-//     console.error("Refresh token error:", error);
-//     return res.status(500).json({ message: "Lỗi máy chủ" });
-//   }
-// };
+        return res.status(200).json({
+          message: "Làm mới token thành công",
+        });
+      }
+    );
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
 
 // export const logout = async (req, res) => {
 //   try {
