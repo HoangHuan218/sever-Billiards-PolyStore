@@ -28,18 +28,18 @@ export const DeleteCategory = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// export const UpdateCategory = async (req, res) => {
-//   try {
-//     const data = await Caterory.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//     });
-//     return res.status(200).json({
-//       message: "Sửa thành công ",
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const UpdateCategory = async (req, res) => {
+  try {
+    const data = await Caterory.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    return res.status(200).json({
+      message: "Sửa thành công ",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // export const DetailCategory = async (req, res) => {
 //   try {
 //     const data = await Caterory.findById(req.params.id);
