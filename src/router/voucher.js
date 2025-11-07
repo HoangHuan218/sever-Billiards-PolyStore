@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 router.get("/vouchers", getAllVoucher);
-// router.post("/voucher", CreateVoucher);
+router.post("/voucher", CreateVoucher);
 // router.patch("/voucher/:id", UpdateVoucher);
 // router.delete("/voucher/:id", DeleteVoucher);
 // router.get("/voucher/:id", DetailVoucher);
