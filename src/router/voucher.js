@@ -12,5 +12,5 @@ router.get("/vouchers", getAllVoucher);
 router.post("/voucher", CreateVoucher);
 router.patch("/voucher/:id", UpdateVoucher);
 router.delete("/voucher/:id", DeleteVoucher);
-// router.get("/voucher/:id", DetailVoucher);
+router.get("/voucher/:id", DetailVoucher);
 export default router;
