@@ -40,11 +40,11 @@ export const UpdateCategory = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// export const DetailCategory = async (req, res) => {
-//   try {
-//     const data = await Caterory.findById(req.params.id);
-//     return res.status(200).json(data);
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const DetailCategory = async (req, res) => {
+  try {
+    const data = await Caterory.findById(req.params.id);
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
