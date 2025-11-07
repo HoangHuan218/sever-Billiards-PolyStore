@@ -164,29 +164,29 @@ export const refreshTokenHandler = async (req, res) => {
   }
 };
 
-// export const logout = async (req, res) => {
-//   try {
-//     // Xóa cả accessToken và refreshToken từ cookie
-//     res.clearCookie("accessToken", {
-//       httpOnly: true,
-//       secure: false, // true nếu dùng HTTPS
-//       sameSite: "lax",
-//       path: "/",
-//     });
+export const logout = async (req, res) => {
+  try {
+    // Xóa cả accessToken và refreshToken từ cookie
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      secure: false, // true nếu dùng HTTPS
+      sameSite: "lax",
+      path: "/",
+    });
 
-//     res.clearCookie("refreshToken", {
-//       httpOnly: true,
-//       secure: false,
-//       sameSite: "lax",
-//       path: "/",
-//     });
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      path: "/",
+    });
 
-//     return res.status(200).json({ message: "Đăng xuất thành công" });
-//   } catch (error) {
-//     console.error("Logout error:", error);
-//     return res.status(500).json({ message: "Lỗi server khi đăng xuất" });
-//   }
-// };
+    return res.status(200).json({ message: "Đăng xuất thành công" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Lỗi server khi đăng xuất" });
+  }
+};
 
 // export const GetUser = async (req, res) => {
 //   try {
