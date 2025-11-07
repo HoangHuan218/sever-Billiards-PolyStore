@@ -88,23 +88,23 @@ const UpdateProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// const DeleteProduct = async (req, res) => {
-//   try {
-//     const data = await Product.findByIdAndDelete(req.params.id);
-//     return res.status(201).json({
-//       message: "Delete success",
-//       // data,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-// export {
-//   Pagination,
-//   GetProductDetails,
-//   GetAllProduct,
-//   AddProduct,
-//   UpdateProduct,
-//   DeleteProduct,
-//   GetProductsCategory,
-// };
+const DeleteProduct = async (req, res) => {
+  try {
+    const data = await Product.findByIdAndDelete(req.params.id);
+    return res.status(201).json({
+      message: "Delete success",
+      // data,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+export {
+  Pagination,
+  GetProductDetails,
+  GetAllProduct,
+  AddProduct,
+  UpdateProduct,
+  DeleteProduct,
+  GetProductsCategory,
+};
