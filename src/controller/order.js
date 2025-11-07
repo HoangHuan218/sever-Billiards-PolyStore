@@ -21,15 +21,15 @@ export const GetOrderByUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// export const AddOrder = async (req, res) => {
-//   try {
-//     const order = new Order(req.body);
-//     await order.save();
-//     return res.status(201).json(order);
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const AddOrder = async (req, res) => {
+  try {
+    const order = new Order(req.body);
+    await order.save();
+    return res.status(201).json(order);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // export const UpdateOrder = async (req, res) => {
 //   try {
 //     const { id } = req.params;
