@@ -15,6 +15,6 @@ router.get("/products/:page", Pagination);
 router.get("/product/:id", GetProductDetails);
 router.get("/products/category/:category", GetProductsCategory);
 router.post("/products", AddProduct);
-// router.patch("/products/:id", UpdateProduct);
+router.patch("/products/:id", UpdateProduct);
 // router.delete("/products/:id", DeleteProduct);
 export default router;
