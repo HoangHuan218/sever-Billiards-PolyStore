@@ -20,5 +20,5 @@ router.post('/refresh-token', refreshTokenHandler);
 router.patch("/user/:id", updateUser);
 router.delete("/user/:id", DeleteUser);
 router.get("/user/:id", DetailUser);
-// router.patch("/user/pass/:id", UpdatePassword);
+router.patch("/user/pass/:id", UpdatePassword);
 export default router;
