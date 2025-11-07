@@ -30,18 +30,18 @@ export const AddOrder = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// export const UpdateOrder = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const data = await Order.findByIdAndUpdate(id, req.body, {
-//       new: true,
-//       runValidators: true,
-//     });
-//     return res.status(200).json(data);
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const UpdateOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await Order.findByIdAndUpdate(id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // export const DeleteOrder = async (req, res) => {
 //   try {
 //     const { id } = req.params;
