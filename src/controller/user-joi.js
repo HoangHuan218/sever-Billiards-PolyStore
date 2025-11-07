@@ -224,24 +224,24 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// export const DeleteUser = async (req, res) => {
-//   try {
-//     await User.findByIdAndDelete(req.params.id);
-//     return res.status(201).json({
-//       message: "Delete success",
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
-// export const DetailUser = async (req, res) => {
-//   try {
-//     const data = await User.findById(req.params.id);
-//     return res.status(200).json(data);
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const DeleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    return res.status(201).json({
+      message: "Delete success",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+export const DetailUser = async (req, res) => {
+  try {
+    const data = await User.findById(req.params.id);
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // export const UpdatePassword = async (req, res) => {
 //   try {
 //     const { id } = req.params;
