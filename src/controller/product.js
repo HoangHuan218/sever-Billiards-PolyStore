@@ -74,20 +74,20 @@ const AddProduct = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// const UpdateProduct = async (req, res) => {
-//   try {
-//     const data = await Product.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//       runValidators: true,
-//     });
-//     return res.status(201).json({
-//       message: "Update success",
-//       data,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+const UpdateProduct = async (req, res) => {
+  try {
+    const data = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    return res.status(201).json({
+      message: "Update success",
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // const DeleteProduct = async (req, res) => {
 //   try {
 //     const data = await Product.findByIdAndDelete(req.params.id);
