@@ -242,30 +242,30 @@ export const DetailUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// export const UpdatePassword = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { beforePassword, newPassword, confirmPassword } = req.body;
-//     const user = await User.findById(id);
-//     const isMatch = await hash.compare(beforePassword, user.password);
-//     if (!isMatch) {
-//       return res.status(400).json({
-//         message: "Mật khẩu hiện tại không đúng",
-//       });
-//     }
-//     if (newPassword !== confirmPassword) {
-//       return res.status(400).json({
-//         message: "2 mật khẩu k trùng nhau",
-//       });
-//     }
-//     const hashedPassword = await hash.hash(newPassword, 10);
-//     await User.findByIdAndUpdate(
-//       id,
-//       { password: hashedPassword },
-//       { new: true }
-//     );
-//     return res.status(200).json({ message: "Thay đổi mật khẩu thành công" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const UpdatePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { beforePassword, newPassword, confirmPassword } = req.body;
+    const user = await User.findById(id);
+    const isMatch = await hash.compare(beforePassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Mật khẩu hiện tại không đúng",
+      });
+    }
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "2 mật khẩu k trùng nhau",
+      });
+    }
+    const hashedPassword = await hash.hash(newPassword, 10);
+    await User.findByIdAndUpdate(
+      id,
+      { password: hashedPassword },
+      { new: true }
+    );
+    return res.status(200).json({ message: "Thay đổi mật khẩu thành công" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
