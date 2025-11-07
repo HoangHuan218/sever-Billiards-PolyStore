@@ -41,76 +41,76 @@ const ACCESS_TOKEN_SECRET =
 const REFRESH_TOKEN_SECRET =
   "040fecc7c403886ec097dc0e001ab80598ba0bdac391e72b8aeef0797f6dee72dedd5c97a2016bcbd3b641dfcc3706149313b7ca8e17c8511fafcc33763d2590";
 
-// export const signin = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
+export const signin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-//     const { error } = loginSchema.validate(req.body, { abortEarly: false });
-//     if (error) {
-//       const list = error.details.map((issue) => ({ message: issue.message }));
-//       return res.status(400).json({ errors: list });
-//     }
+    const { error } = loginSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      const list = error.details.map((issue) => ({ message: issue.message }));
+      return res.status(400).json({ errors: list });
+    }
 
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res
-//         .status(400)
-//         .json({ message: "Thông tin đăng nhập không hợp lệ" });
-//     }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Thông tin đăng nhập không hợp lệ" });
+    }
 
-//     const isMatch = await hash.compare(password, user.password);
-//     if (!isMatch) {
-//       return res
-//         .status(400)
-//         .json({ message: "Thông tin đăng nhập không hợp lệ" });
-//     }
+    const isMatch = await hash.compare(password, user.password);
+    if (!isMatch) {
+      return res
+        .status(400)
+        .json({ message: "Thông tin đăng nhập không hợp lệ" });
+    }
 
-//     const accessToken = jwt.sign(
-//       {
-//         id: user._id,
-//         email: user.email,
-//         role: user.role,
-//       },
-//       ACCESS_TOKEN_SECRET,
-//       {
-//         expiresIn: "1d",
-//       }
-//     );
+    const accessToken = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
-//     const refreshToken = jwt.sign(
-//       { id: user._id },
-//       REFRESH_TOKEN_SECRET,
-//       {
-//         expiresIn: "7d",
-//       }
-//     );
+    const refreshToken = jwt.sign(
+      { id: user._id },
+      REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: "7d",
+      }
+    );
 
-//     res.cookie("accessToken", accessToken, {
-//       httpOnly: true,
-//       secure: true,
-//       sameSite: "strict",
-//       maxAge: 1 * 24 * 60 * 60 * 1000,
-//       path: "/",
-//     });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 1 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
 
-//     res.cookie("refreshToken", refreshToken, {
-//       httpOnly: true,
-//       secure: true,
-//       sameSite: "strict",
-//       maxAge: 7 * 24 * 60 * 60 * 1000,
-//       path: "/",
-//     });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
 
-//     return res.status(200).json({
-//       user,
-//       token:accessToken,
-//       message: "Đăng nhập thành công",
-//     });
-//   } catch (error) {
-//     console.error("Signin error:", error);
-//     return res.status(500).json({ message: "Lỗi máy chủ" });
-//   }
-// };
+    return res.status(200).json({
+      user,
+      token:accessToken,
+      message: "Đăng nhập thành công",
+    });
+  } catch (error) {
+    console.error("Signin error:", error);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
+  }
+};
 
 // export const refreshTokenHandler = async (req, res) => {
 //   try {
