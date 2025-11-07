@@ -7,17 +7,17 @@ export const GetAllCategory = async (req, res) => {
     return res.status(200).json({ message: error.message });
   }
 };
-// export const CreateCategory = async (req, res) => {
-//   try {
-//     const data = await Caterory(req.body).save();
-//     return res.status(201).json({
-//       message: "Them thanh cong ",
-//       data,
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const CreateCategory = async (req, res) => {
+  try {
+    const data = await Caterory(req.body).save();
+    return res.status(201).json({
+      message: "Them thanh cong ",
+      data,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // export const DeleteCategory = async (req, res) => {
 //   try {
 //     await Caterory.findByIdAndDelete(req.params.id);
