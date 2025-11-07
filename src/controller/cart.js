@@ -30,22 +30,22 @@ export const AddCart = async (req, res) => {
   }
 };
 
-// export const GetCart = async (req, res) => {
-//   try {
-//     const { userid } = req.params;
-//     const cart = await Cart.find({ user: userid }).populate({
-//       path: "product",
-//       select: "name price imageUrl",
-//     });
-//     const total = cart.reduce(
-//       (acc, item) => acc + item.quantity * item.product.price,
-//       0,
-//     );
-//     return res.status(200).json({ data: cart, totalPrice: total });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const GetCart = async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const cart = await Cart.find({ user: userid }).populate({
+      path: "product",
+      select: "name price imageUrl",
+    });
+    const total = cart.reduce(
+      (acc, item) => acc + item.quantity * item.product.price,
+      0,
+    );
+    return res.status(200).json({ data: cart, totalPrice: total });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 // export const DeleteCart = async (req, res) => {
 //   try {
 //     const { id } = req.params;
