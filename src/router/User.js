@@ -13,7 +13,7 @@ import {
 } from "../controller/user-joi";
 const router = express.Router();
 router.post("/register", singup);
-// router.get("/user", GetUser);
+router.get("/user", GetUser);
 // router.post("/logout", logout);
 // router.post("/login", signin);
 // router.post('/refresh-token', refreshTokenHandler);
