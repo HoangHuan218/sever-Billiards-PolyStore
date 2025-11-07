@@ -196,33 +196,33 @@ export const GetUser = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
-// export const updateUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { username } = req.body;
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username } = req.body;
 
-//     // Check if another user has the same username
-//     const checkname = await User.findOne({ username });
+    // Check if another user has the same username
+    const checkname = await User.findOne({ username });
 
-//     // Check if the username belongs to a different user
-//     if (checkname && checkname._id.toString() !== id) {
-//       return res.status(400).json({
-//         message: "Username already exists",
-//       });
-//     }
+    // Check if the username belongs to a different user
+    if (checkname && checkname._id.toString() !== id) {
+      return res.status(400).json({
+        message: "Username already exists",
+      });
+    }
 
-//     // Update the user if no conflict
-//     await User.findByIdAndUpdate(id, req.body, {
-//       new: true,
-//     });
+    // Update the user if no conflict
+    await User.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
 
-//     return res.status(200).json({
-//       message: "Update success",
-//     });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+    return res.status(200).json({
+      message: "Update success",
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 // export const DeleteUser = async (req, res) => {
 //   try {
