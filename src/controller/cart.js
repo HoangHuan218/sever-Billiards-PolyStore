@@ -65,13 +65,13 @@ export const DeleteAllCart = async (req, res) => {
   }
 };
 
-// export const UpdateCart = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { quantity } = req.body;
-//     const cart = await Cart.findByIdAndUpdate(id, { quantity }, { new: true });
-//     return res.status(200).json({ message: "Cap nhat thanh cong" });
-//   } catch (error) {
-//     return res.status(500).json({ message: error.message });
-//   }
-// };
+export const UpdateCart = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { quantity } = req.body;
+    const cart = await Cart.findByIdAndUpdate(id, { quantity }, { new: true });
+    return res.status(200).json({ message: "Cap nhat thanh cong" });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
