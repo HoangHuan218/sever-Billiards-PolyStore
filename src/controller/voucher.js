@@ -35,18 +35,18 @@ export const UpdateVoucher = async (req, res) => {
     });
   }
 };
-// export const DeleteVoucher = async (req, res) => {
-//   try {
-//     await Voucher.findByIdAndDelete(req.params.id);
-//     return res.status(500).json({
-//       message: "Xóa thành công",
-//     });
-//   } catch (e) {
-//     return res.status(500).json({
-//       message: e.message,
-//     });
-//   }
-// };
+export const DeleteVoucher = async (req, res) => {
+  try {
+    await Voucher.findByIdAndDelete(req.params.id);
+    return res.status(500).json({
+      message: "Xóa thành công",
+    });
+  } catch (e) {
+    return res.status(500).json({
+      message: e.message,
+    });
+  }
+};
 // export const DetailVoucher = async (req, res) => {
 //   try {
 //     const data = await Voucher.findById(req.params.id);
