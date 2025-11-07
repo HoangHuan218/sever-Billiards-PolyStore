@@ -12,5 +12,5 @@ route.post("/cart/:userid", AddCart);
 route.get("/cart/:userid", GetCart);
 route.delete("/cart/:id", DeleteCart);
 route.patch("/cart/:id", UpdateCart);
-// route.delete("/carts/:userid", DeleteAllCart);
+route.delete("/carts/:userid", DeleteAllCart);
 export default route;
