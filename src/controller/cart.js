@@ -17,10 +17,20 @@ export const AddCart = async (req, res) => {
         size,
       });
     }
+    // else if (cartItem.color !== color || cartItem.size !== size) {
+    //   cartItem = new Cart({
+    //     user: userid,
+    //     product: productid,
+    //     quantity: quantity || 1, // Mặc định là 1 nếu không có quantity
+    //     color,
+    //     size,
+    //   });
+    // }
     else {
       // Nếu sản phẩm đã có, tăng số lượng
       cartItem.quantity += quantity;
     }
+
     // Lưu thay đổi vào cơ sở dữ liệu
     await cartItem.save();
     console.log(cartItem);
@@ -64,7 +74,15 @@ export const DeleteAllCart = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
+// export const DeleteAllOrder = async (req, res) => {
+//   try {
+//     const { userid } = req.params;
+//     await Order.deleteMany();
+//     return res.status(200).json({ message: "Xóa thanh cong" });
+//   } catch (error) {
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
 export const UpdateCart = async (req, res) => {
   try {
     const { id } = req.params;
