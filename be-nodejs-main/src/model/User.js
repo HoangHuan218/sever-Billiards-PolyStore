@@ -19,7 +19,7 @@ const userSchma = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "user", "manage"],
+      enum: ["admin", "user"],
       default: "admin",
     },
     avatar: {
@@ -30,10 +30,6 @@ const userSchma = new mongoose.Schema(
     },
     phone: {
       type: String,
-    },
-    active: {
-      type: Boolean,
-      default: false,
     },
   },
   {

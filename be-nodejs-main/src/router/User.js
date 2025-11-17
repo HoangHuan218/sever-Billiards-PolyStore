@@ -10,11 +10,9 @@ import {
   signin,
   refreshTokenHandler,
   logout,
-  addUser,
 } from "../controller/user-joi";
 const router = express.Router();
 router.post("/register", singup);
-router.post("/addUser", addUser);
 router.get("/user", GetUser);
 router.post("/logout", logout);
 router.post("/login", signin);
