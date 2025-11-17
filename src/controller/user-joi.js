@@ -1,11 +1,46 @@
 import { User } from "../model/User";
 import hash from "bcryptjs";
-import { reqSchma, loginSchema } from "../Schma/auth";
+import { reqSchma, loginSchema, addUserSchma } from "../Schma/auth";
 import jwt from "jsonwebtoken";
 export const singup = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
     const { error } = reqSchma.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      const list = error.details.map((issue) => ({
+        message: issue.message,
+      }));
+      return res.status(400).json(list);
+    }
+    const emailUser = await User.findOne({ email });
+    const usernameUser = await User.findOne({ username });
+    if (emailUser) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
+    }
+    if (usernameUser) {
+      return res.status(400).json({
+        message: "Username already exists",
+      });
+    }
+    const hashedPassword = await hash.hash(password, 10);
+    await User.create({ username, email, password: hashedPassword, role });
+    return res.status(201).json({ message: "User created successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Đăng Ký thất bại",
+      error: error.message,
+    });
+  }
+};
+
+export const addUser = async (req, res) => {
+  try {
+    const { username, email, password ,role} = req.body;
+    const { error } = addUserSchma.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
@@ -190,10 +225,35 @@ export const logout = async (req, res) => {
 
 export const GetUser = async (req, res) => {
   try {
-    const data = await User.find();
-    return res.status(200).json(data);
+    // Lấy page và limit từ query params, mặc định page=1, limit=10
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Tính toán số document cần bỏ qua
+    const skip = (page - 1) * limit;
+
+    // Lấy tổng số documents
+    const total = await User.countDocuments();
+
+    // Lấy data với phân trang
+    const data = await User.find().skip(skip).limit(limit);
+
+    // Tính toán thông tin phân trang
+    const totalPages = Math.ceil(total / limit);
+
+    return res.status(200).json({
+      data,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: total,
+        itemsPerPage: limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
+    });
   } catch (error) {
-    return res.status(500).json(error.message);
+    return res.status(500).json({ message: error.message });
   }
 };
 export const updateUser = async (req, res) => {
