@@ -5,30 +5,46 @@ import jwt from "jsonwebtoken";
 export const singup = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
-    const { error } = reqSchma.validate(req.body, {
-      abortEarly: false,
-    });
+
+    // Validate
+    const { error } = reqSchma.validate(req.body, { abortEarly: false });
     if (error) {
       const list = error.details.map((issue) => ({
         message: issue.message,
       }));
       return res.status(400).json(list);
     }
+
+    // Check username & email
     const emailUser = await User.findOne({ email });
     const usernameUser = await User.findOne({ username });
+
     if (emailUser) {
-      return res.status(400).json({
-        message: "Email already exists",
-      });
+      return res.status(400).json({ message: "Email already exists" });
     }
     if (usernameUser) {
-      return res.status(400).json({
-        message: "Username already exists",
-      });
+      return res.status(400).json({ message: "Username already exists" });
     }
+
+    // Hash password
     const hashedPassword = await hash.hash(password, 10);
-    await User.create({ username, email, password: hashedPassword, role });
-    return res.status(201).json({ message: "User created successfully" });
+
+    // Các trường không bắt buộc -> nếu không có => null
+    const newUser = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      role: role || "admin", // hoặc bỏ vì schema đã default
+      avatar: req.body.avatar || null,
+      address: req.body.address || null,
+      phone: req.body.phone || null,
+      active: req.body.active ?? false, // nếu không truyền -> false
+    });
+
+    return res.status(201).json({
+      message: "User created successfully",
+      user: newUser,
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Đăng Ký thất bại",
@@ -39,7 +55,7 @@ export const singup = async (req, res) => {
 
 export const addUser = async (req, res) => {
   try {
-    const { username, email, password ,role} = req.body;
+    const { username, email, password, role } = req.body;
     const { error } = addUserSchma.validate(req.body, {
       abortEarly: false,
     });
@@ -112,13 +128,9 @@ export const signin = async (req, res) => {
       }
     );
 
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      REFRESH_TOKEN_SECRET,
-      {
-        expiresIn: "7d",
-      }
-    );
+    const refreshToken = jwt.sign({ id: user._id }, REFRESH_TOKEN_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -138,7 +150,7 @@ export const signin = async (req, res) => {
 
     return res.status(200).json({
       user,
-      token:accessToken,
+      token: accessToken,
       message: "Đăng nhập thành công",
     });
   } catch (error) {
@@ -154,45 +166,39 @@ export const refreshTokenHandler = async (req, res) => {
       return res.status(401).json({ message: "Không có refresh token" });
     }
 
-    jwt.verify(
-      token,
-      REFRESH_TOKEN_SECRET,
-      async (err, decoded) => {
-        if (err) {
-          return res
-            .status(403)
-            .json({ message: "Refresh token không hợp lệ" });
-        }
-
-        const user = await User.findById(decoded.id);
-        if (!user) {
-          return res.status(404).json({ message: "Người dùng không tồn tại" });
-        }
-
-        const newAccessToken = jwt.sign(
-          {
-            id: user._id,
-            email: user.email,
-            role: user.role,
-          },
-         ACCESS_TOKEN_SECRET,
-          { expiresIn: "1d" }
-        );
-
-        res.cookie("accessToken", newAccessToken, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          maxAge: 1 * 24 * 60 * 60 * 1000,
-          domain: "https://nextnode-mu.vercel.app",
-          path: "/",
-        });
-
-        return res.status(200).json({
-          message: "Làm mới token thành công",
-        });
+    jwt.verify(token, REFRESH_TOKEN_SECRET, async (err, decoded) => {
+      if (err) {
+        return res.status(403).json({ message: "Refresh token không hợp lệ" });
       }
-    );
+
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        return res.status(404).json({ message: "Người dùng không tồn tại" });
+      }
+
+      const newAccessToken = jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+          role: user.role,
+        },
+        ACCESS_TOKEN_SECRET,
+        { expiresIn: "1d" }
+      );
+
+      res.cookie("accessToken", newAccessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 1 * 24 * 60 * 60 * 1000,
+        domain: "https://nextnode-mu.vercel.app",
+        path: "/",
+      });
+
+      return res.status(200).json({
+        message: "Làm mới token thành công",
+      });
+    });
   } catch (error) {
     console.error("Refresh token error:", error);
     return res.status(500).json({ message: "Lỗi máy chủ" });
@@ -225,23 +231,37 @@ export const logout = async (req, res) => {
 
 export const GetUser = async (req, res) => {
   try {
-    // Lấy page và limit từ query params, mặc định page=1, limit=10
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search?.trim() || "";
 
-    // Tính toán số document cần bỏ qua
     const skip = (page - 1) * limit;
 
-    // Lấy tổng số documents
-    const total = await User.countDocuments();
 
-    // Lấy data với phân trang
-    const data = await User.find().skip(skip).limit(limit);
+    const baseFilter = {
+      role: { $nin: ["manage"] },
+    };
 
-    // Tính toán thông tin phân trang
+    // Tìm kiếm theo username (nếu có)
+    const searchFilter = search
+      ? {
+          username: { $regex: search, $options: "i" },
+          ...baseFilter,
+        }
+      : baseFilter;
+
+    const total = await User.countDocuments(searchFilter);
+
+    const data = await User.find(searchFilter)
+      .select("-password") // Ẩn mật khẩu (nên làm)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Sắp xếp mới nhất trước (tùy chọn)
+
     const totalPages = Math.ceil(total / limit);
 
     return res.status(200).json({
+      success: true,
       data,
       pagination: {
         currentPage: page,
@@ -253,7 +273,12 @@ export const GetUser = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error("Error in GetUser:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi server",
+      error: error.message,
+    });
   }
 };
 export const updateUser = async (req, res) => {
