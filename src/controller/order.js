@@ -1,18 +1,15 @@
+import mongoose from "mongoose";
 import { Order } from "../model/order";
 import { Product } from "../model/product";
 
 export const GetOrder = async (req, res) => {
   try {
     const {
-      page = 1,
-      limit = 10,
       search = "",
       status = "",
       payment = "",
     } = req.query;
 
-    const pageNumber = Number(page) || 1;
-    const pageSize = Number(limit) || 10;
 
     // Tạo query filter
     const filter = {};
@@ -41,24 +38,17 @@ export const GetOrder = async (req, res) => {
       filter.payment = payment;
     }
 
-    const skip = (pageNumber - 1) * pageSize;
 
     // Lấy dữ liệu với filter và phân trang
-    const [data, total] = await Promise.all([
+    const [data] = await Promise.all([
       Order.find(filter)
         .populate("products.productId", "imageUrl")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(pageSize),
+        .sort({ createdAt: -1 }),
       Order.countDocuments(filter),
     ]);
 
     return res.status(200).json({
       data,
-      current_page: pageNumber,
-      per_page: pageSize,
-      total,
-      total_pages: Math.ceil(total / pageSize),
     });
   } catch (error) {
     console.error("GetOrder error:", error);
@@ -78,13 +68,54 @@ export const GetOrderByUser = async (req, res) => {
 };
 
 export const AddOrder = async (req, res) => {
-  try {
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
+  try {
+    // 1. Xử lý voucherId = ""
+    if (req.body.voucherId === "") {
+      req.body.voucherId = null;
+    }
+
+    const { products } = req.body;
+
+    // 2. Kiểm tra tồn kho
+    for (const item of products) {
+      const product = await Product.findById(item.productId).session(session);
+
+      if (!product) {
+        throw new Error("Sản phẩm không tồn tại");
+      }
+
+      if (product.quantity < item.quantity) {
+        throw new Error(`Sản phẩm ${product.name} không đủ số lượng`);
+      }
+    }
+
+    // 3. Lưu order
     const order = new Order(req.body);
-    await order.save();
+    await order.save({ session });
+
+    // 4. Trừ kho
+    for (const item of products) {
+      await Product.findByIdAndUpdate(
+        item.productId,
+        { $inc: { quantity: -item.quantity } },
+        { session }
+      );
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
     return res.status(201).json(order);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    await session.abortTransaction();
+    session.endSession();
+
+    return res.status(400).json({
+      message: error.message,
+    });
   }
 };
 
