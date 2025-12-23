@@ -57,11 +57,14 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    voucherId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "vouchers",
-      required: false,
-    },
+voucherId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "vouchers",
+  required: false,
+  default: null,
+  set: v => (v === "" ? null : v),
+},
+
 
     note: {
       type: String,
@@ -70,6 +73,13 @@ const orderSchema = new mongoose.Schema(
     isPaymentSucces: {
       type: Boolean,
       default: false,
+    },
+    cancelReason: {
+      type: String, // lý do khách muốn hủy
+    },
+    isCancelApproved: {
+      type: Boolean,
+      default: false, // admin chưa duyệt yêu cầu hủy
     },
   },
   {
