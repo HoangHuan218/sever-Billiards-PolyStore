@@ -3,22 +3,15 @@ import { Product } from "../model/product";
 
 const GetAllProduct = async (req, res) => {
   try {
-
-
     // đếm tổng số sản phẩm
     const total = await Product.countDocuments();
 
     // lấy dữ liệu theo trang
     const data = await Product.find()
       .populate("caterori", "name")
+      .populate("createdBy", "username")
+      .populate("createdBy", "username")
       .sort({ createdAt: -1 }); // optional: sắp xếp mới nhất
-
-    // nếu bạn muốn thêm field category_name:
-    // const transformedData = data.map((product) => ({
-    //   ...product.toObject(),
-    //   category_name: product.caterori?.name || null,
-    //   category_id: product.caterori?._id || null,
-    // }));
 
     return res.status(200).json({
       data, // hoặc transformedData
@@ -84,29 +77,87 @@ const GetProductsCategory = async (req, res) => {
 };
 const AddProduct = async (req, res) => {
   try {
-    const data = await Product(req.body).save();
+    const { variants, quantity, price } = req.body;
+
+    let totalQuantity = Number(quantity) || 0;
+    let productPrice = Number(price) || 0;
+
+    // Nếu có biến thể
+    if (variants && variants.length > 0) {
+      // Tổng số lượng
+      totalQuantity = variants.reduce((sum, item) => {
+        return sum + Number(item.quantity || 0);
+      }, 0);
+
+      // Giá lấy từ biến thể đầu tiên
+      productPrice = Number(variants[0].price) || 0;
+    }
+
+    const data = await Product.create({
+      ...req.body,
+      quantity: totalQuantity,
+      price: productPrice,
+    });
+
     return res.status(201).json({
-      message: "Them thanh cong ",
+      message: "Thêm thành công",
       data,
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
+
 const UpdateProduct = async (req, res) => {
   try {
-    const data = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    return res.status(201).json({
+    const { variants, quantity, price } = req.body;
+
+    let totalQuantity = Number(quantity) || 0;
+    let productPrice = Number(price) || 0;
+
+    // Nếu có biến thể
+    if (variants && variants.length > 0) {
+      // Tổng số lượng từ variants
+      totalQuantity = variants.reduce((sum, item) => {
+        return sum + Number(item.quantity || 0);
+      }, 0);
+
+      // Giá lấy từ biến thể đầu tiên
+      productPrice = Number(variants[0].price) || 0;
+    }
+
+    const data = await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        quantity: totalQuantity,
+        price: productPrice,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!data) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
       message: "Update success",
       data,
     });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
+
 const DeleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;

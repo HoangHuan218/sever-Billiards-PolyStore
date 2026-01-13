@@ -31,6 +31,7 @@ const orderSchema = new mongoose.Schema(
         priceBeforeDis: { type: Number, required: true },
         priceAfterDis: { type: Number, required: true },
         name: { type: String, required: true },
+        color: { type: String, required: true },
       },
     ],
 
@@ -53,18 +54,17 @@ const orderSchema = new mongoose.Schema(
 
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
+      ref: "Users",
       required: true,
     },
 
-voucherId: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "vouchers",
-  required: false,
-  default: null,
-  set: v => (v === "" ? null : v),
-},
-
+    voucherId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "vouchers",
+      required: false,
+      default: null,
+      set: (v) => (v === "" ? null : v),
+    },
 
     note: {
       type: String,
@@ -75,11 +75,13 @@ voucherId: {
       default: false,
     },
     cancelReason: {
-      type: String, // lý do khách muốn hủy
+      type: String,
     },
-    isCancelApproved: {
-      type: Boolean,
-      default: false, // admin chưa duyệt yêu cầu hủy
+    handledBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      default: null,
+      required: false,
     },
   },
   {
