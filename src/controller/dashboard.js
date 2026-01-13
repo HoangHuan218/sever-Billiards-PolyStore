@@ -196,7 +196,10 @@ const DashboardStats = async (req, res) => {
       { $unwind: "$products" },
       {
         $group: {
-          _id: "$products.productId",
+          _id: {
+            productId: "$products.productId",
+            color: "$products.color",
+          },
           qty: { $sum: "$products.quantity" },
         },
       },
@@ -205,7 +208,7 @@ const DashboardStats = async (req, res) => {
       {
         $lookup: {
           from: "products",
-          localField: "_id",
+          localField: "_id.productId",
           foreignField: "_id",
           as: "product",
         },
@@ -214,16 +217,11 @@ const DashboardStats = async (req, res) => {
       {
         $project: {
           _id: 0,
-          productId: {
-            $cond: [
-              { $ifNull: ["$product._id", false] },
-              "$product._id",
-              "$_id",
-            ],
-          },
+          productId: "$_id.productId",
           name: { $ifNull: ["$product.name", "Unknown product"] },
-          image: "$product.image",
+          image: "$product.imageUrl", // ✅ ảnh theo productId
           price: "$product.price",
+          color: "$_id.color",
           qty: 1,
         },
       },
@@ -236,7 +234,7 @@ const DashboardStats = async (req, res) => {
       .select(
         "madh customerName phone totalPrice status payment orderDate products userId"
       )
-      .populate("products.productId", "name image price");
+      .populate("products.productId", "name image price color");
 
     // await all promises
     const [
